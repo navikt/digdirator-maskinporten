@@ -15,7 +15,7 @@ import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.server.netty.NettyApplicationEngine
 import io.ktor.util.KtorExperimentalAPI
-import maskinporten.api.exceptionHandler
+import maskinporten.api.handler.exceptionHandler
 import maskinporten.api.selfTest
 import maskinporten.api.token
 import maskinporten.config.Environment

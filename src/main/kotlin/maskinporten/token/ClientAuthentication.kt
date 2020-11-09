@@ -24,20 +24,23 @@ internal const val PARAMS_GRANT_TYPE = "grant_type"
 internal const val PARAMS_CLIENT_ASSERTION = "client_assertion"
 
 class ClientAuthentication(
-    private val maskinportenConfig: Environment.Maskinporten
+    private val env: Environment
 ) {
-    private val rsaKey = RSAKey.parse(maskinportenConfig.privateJwk)
+    private val rsaKey = RSAKey.parse(env.maskinporten.privateJwk)
 
     @KtorExperimentalAPI
     fun clientAssertion(): String {
-        log.info { "Getting Keys with keyID: ${rsaKey.keyID}" }
-        log.info { "Getting Apps own private key and generating JWT token for integration with TokenDings" }
         return clientAssertion(
-            maskinportenConfig.clientId,
-            maskinportenConfig.metadata.issuer,
-            maskinportenConfig.scopes,
+            env.maskinporten.clientId,
+            env.maskinporten.metadata.issuer,
+            env.maskinporten.scopes,
             rsaKey
-        )
+        ).also {
+            log.info {
+                "Keys with keyID: ${rsaKey.keyID}. " +
+                    "Generating JWT token for integration with: ${env.maskinporten.metadata.issuer}"
+            }
+        }
     }
 }
 

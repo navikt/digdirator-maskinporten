@@ -13,6 +13,7 @@ import io.ktor.util.KtorExperimentalAPI
 import kotlinx.coroutines.runBlocking
 import maskinporten.http.defaultHttpClient
 import maskinporten.http.getOAuthServerConfigurationMetadata
+import maskinporten.http.objectMapper
 import maskinporten.token.OauthServerConfigurationMetadata
 import java.security.KeyPairGenerator
 import java.security.interfaces.RSAPrivateKey
@@ -36,12 +37,12 @@ data class Environment(
     data class Maskinporten(
         val wellKnownUrl: String = config.getOrElse(
             Key("maskinporten.well.known.url", stringType),
-            "https://ver2.maskinporten/.well-known/oauth-authorization-server"
+            "https://ver2.maskinporten.no/.well-known/oauth-authorization-server"
         ),
         val clientId: String = config.getOrElse(Key("maskinporten.client.id", stringType), "clientID"),
         val privateJwk: String = config.getOrElse(
             Key("maskinporten.private.jwk", stringType),
-            generateRsaKey().toJSONObject().toJSONString()
+            objectMapper.writeValueAsString(generateRsaKey().toJSONObject())
         ),
         val scopes: String = config.getOrElse(Key("maskinporten.scopes", stringType), "nav:scope1 nav:scope2"),
     ) {

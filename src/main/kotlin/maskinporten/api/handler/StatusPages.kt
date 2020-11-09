@@ -1,10 +1,9 @@
-package maskinporten.api
+package maskinporten.api.handler
 
 import io.ktor.application.call
 import io.ktor.features.StatusPages
 import io.ktor.http.HttpStatusCode
 import io.ktor.response.respond
-import no.nav.dings.HttpException
 import javax.security.sasl.AuthenticationException
 
 fun StatusPages.Configuration.exceptionHandler() {

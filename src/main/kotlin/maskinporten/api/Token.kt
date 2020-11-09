@@ -12,12 +12,11 @@ import maskinporten.token.ClientAuthentication
 import maskinporten.token.token
 
 @KtorExperimentalAPI
-fun Routing.token(environment: Environment) {
+fun Routing.token(env: Environment) {
     get("/token") {
-        val maskinportenConfig = environment.maskinporten
-        val authentication = ClientAuthentication(maskinportenConfig)
+        val authentication = ClientAuthentication(env)
         val tokenResponse = defaultHttpClient.token(
-            maskinportenConfig.metadata.tokenEndpoint,
+            env.maskinporten.metadata.tokenEndpoint,
             authentication.clientAssertion()
         )
         call.respond(HttpStatusCode.OK, tokenResponse)
