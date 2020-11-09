@@ -39,10 +39,10 @@ spec:
       cpu: 600m
       memory: 3Gi
   cpuThresholdPercentage: 80
-  maskinporten:
-    enabled: true
-    scopes:
-      - nav:scope
+ # maskinporten:
+ #   enabled: true
+ #   scopes:
+ #     - nav:scope
   env:
   {{#each env}}
     - name: "{{this.name}}"
