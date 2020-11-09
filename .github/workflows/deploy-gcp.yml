@@ -3,7 +3,7 @@ name: Build, push, and deploy to GCP
 on:
   push:
     branches:
-      - master
+      - main
 
 env:
   IMAGE: docker.pkg.github.com/${{ github.repository }}/digdirator-maskinporten:${{ github.sha }}
