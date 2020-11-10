@@ -10,6 +10,7 @@ import io.ktor.features.ContentNegotiation
 import io.ktor.features.StatusPages
 import io.ktor.http.ContentType
 import io.ktor.jackson.JacksonConverter
+import io.ktor.request.path
 import io.ktor.routing.Routing
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
@@ -46,6 +47,7 @@ fun Application.setupHttpServer(environment: Environment, applicationStatus: App
     log.info { "Log level -> $logLevel" }
     install(CallLogging) {
         level = logLevel
+        filter { call -> call.request.path().startsWith("/token") }
     }
     log.info { "Api exception handler" }
     install(StatusPages) {
