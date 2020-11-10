@@ -7,6 +7,7 @@ import com.natpryce.konfig.Key
 import com.natpryce.konfig.intType
 import com.natpryce.konfig.overriding
 import com.natpryce.konfig.stringType
+import com.nimbusds.jose.Algorithm
 import com.nimbusds.jose.jwk.KeyUse
 import com.nimbusds.jose.jwk.RSAKey
 import io.ktor.util.KtorExperimentalAPI
@@ -60,6 +61,7 @@ internal fun generateRsaKey(keyId: String = UUID.randomUUID().toString(), keySiz
             RSAKey.Builder(it.public as RSAPublicKey)
                 .privateKey(it.private as RSAPrivateKey)
                 .keyID(keyId)
+                .algorithm(Algorithm("RS256"))
                 .keyUse(KeyUse.SIGNATURE)
                 .build()
         }

@@ -1,6 +1,3 @@
-import java.util.List.of
-import kotlin.collections.plus as plus1
-
 // Common
 val kotlinVersion = "1.4.10"
 val ktorVersion = "1.4.1"
@@ -19,10 +16,10 @@ val kotlinloggingVersion = "2.0.3"
 // Test
 val kluentVersion = "1.63"
 val wiremockVersion = "2.27.2"
-val platformRunner = "1.7.0"
 val mockOauth = "0.2.0"
+val junitJupiterVersion = "5.7.0"
 
-val mainClassName = "no.nav.dings.DebugKt"
+val mainClassName = "maskinporten.MainKt"
 
 plugins {
     kotlin("jvm") version "1.4.10"
@@ -81,12 +78,12 @@ dependencies {
     implementation ("io.prometheus:simpleclient_hotspot:$ioPrometheusVersion")
     implementation ("io.prometheus:simpleclient_common:$ioPrometheusVersion")
     implementation ("io.github.microutils:kotlin-logging:$kotlinloggingVersion")
-
     testImplementation ("no.nav.security:mock-oauth2-server:$mockOauth")
     testImplementation("io.ktor:ktor-server-test-host:$ktorVersion") {
         exclude(group = "org.eclipse.jetty")
     }
     testImplementation("org.amshove.kluent:kluent:$kluentVersion")
-    testImplementation("org.junit.platform:junit-platform-runner:$platformRunner")
     testImplementation ("com.github.tomakehurst:wiremock:$wiremockVersion")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion")
 }

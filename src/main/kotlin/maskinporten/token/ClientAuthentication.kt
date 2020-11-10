@@ -4,6 +4,7 @@ import com.nimbusds.jose.JOSEObjectType
 import com.nimbusds.jose.JWSAlgorithm
 import com.nimbusds.jose.JWSHeader
 import com.nimbusds.jose.crypto.RSASSASigner
+import com.nimbusds.jose.jwk.JWKSet
 import com.nimbusds.jose.jwk.RSAKey
 import com.nimbusds.jwt.JWTClaimsSet
 import com.nimbusds.jwt.SignedJWT
@@ -12,16 +13,17 @@ import io.ktor.client.request.forms.submitForm
 import io.ktor.http.parametersOf
 import io.ktor.util.KtorExperimentalAPI
 import maskinporten.config.Environment
+import maskinporten.http.objectMapper
 import mu.KotlinLogging
 import java.time.Instant
 import java.util.Date
 import java.util.UUID
 
 private val log = KotlinLogging.logger { }
-internal const val SCOPES = "scopes"
+internal const val SCOPE = "scope"
 internal const val GRANT_TYPE = "urn:ietf:params:oauth:grant-type:jwt-bearer"
 internal const val PARAMS_GRANT_TYPE = "grant_type"
-internal const val PARAMS_CLIENT_ASSERTION = "client_assertion"
+internal const val PARAMS_CLIENT_ASSERTION = "assertion"
 
 class ClientAuthentication(
     private val env: Environment
@@ -30,6 +32,8 @@ class ClientAuthentication(
 
     @KtorExperimentalAPI
     fun clientAssertion(): String {
+        // println(rsaKey)
+        // println(objectMapper.writeValueAsString(JWKSet(rsaKey).toJSONObject(true)))
         return clientAssertion(
             env.maskinporten.clientId,
             env.maskinporten.metadata.issuer,
@@ -61,7 +65,7 @@ fun clientAssertion(clientId: String, audience: String, scopes: String, rsaKey: 
         .issueTime(now)
         .expirationTime(Date.from(Instant.now().plusSeconds(60)))
         .jwtID(UUID.randomUUID().toString())
-        .claim(SCOPES, scopes)
+        .claim(SCOPE, scopes)
         .build()
         .sign(rsaKey)
         .serialize()
