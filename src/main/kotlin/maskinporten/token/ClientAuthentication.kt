@@ -4,20 +4,16 @@ import com.nimbusds.jose.JOSEObjectType
 import com.nimbusds.jose.JWSAlgorithm
 import com.nimbusds.jose.JWSHeader
 import com.nimbusds.jose.crypto.RSASSASigner
-import com.nimbusds.jose.jwk.JWKSet
 import com.nimbusds.jose.jwk.RSAKey
 import com.nimbusds.jwt.JWTClaimsSet
 import com.nimbusds.jwt.SignedJWT
-import io.ktor.client.HttpClient
-import io.ktor.client.request.forms.submitForm
-import io.ktor.http.parametersOf
 import io.ktor.util.KtorExperimentalAPI
 import maskinporten.config.Environment
-import maskinporten.http.objectMapper
+import maskinporten.http.defaultHttpClient
+import maskinporten.http.token
 import mu.KotlinLogging
 import java.time.Instant
-import java.util.Date
-import java.util.UUID
+import java.util.*
 
 private val log = KotlinLogging.logger { }
 internal const val SCOPE = "scope"
@@ -25,13 +21,19 @@ internal const val GRANT_TYPE = "urn:ietf:params:oauth:grant-type:jwt-bearer"
 internal const val PARAMS_GRANT_TYPE = "grant_type"
 internal const val PARAMS_CLIENT_ASSERTION = "assertion"
 
+@KtorExperimentalAPI
 class ClientAuthentication(
     private val env: Environment
 ) {
     private val rsaKey = RSAKey.parse(env.maskinporten.privateJwk)
 
-    @KtorExperimentalAPI
-    fun clientAssertion(): String {
+    suspend fun tokenRequest() =
+        defaultHttpClient.token(
+            env.maskinporten.metadata.tokenEndpoint,
+            clientAssertion()
+        )
+
+    private fun clientAssertion(): String {
         // println(rsaKey)
         // println(objectMapper.writeValueAsString(JWKSet(rsaKey).toJSONObject(true)))
         return clientAssertion(
@@ -48,22 +50,13 @@ class ClientAuthentication(
     }
 }
 
-suspend fun HttpClient.token(url: String, assertion: String) =
-    this.submitForm<AccessTokenResponse>(
-        url = url,
-        formParameters = parametersOf(
-            PARAMS_CLIENT_ASSERTION to listOf(assertion),
-            PARAMS_GRANT_TYPE to listOf(GRANT_TYPE)
-        )
-    )
-
-fun clientAssertion(clientId: String, audience: String, scopes: String, rsaKey: RSAKey): String {
+internal fun clientAssertion(clientId: String, audience: String, scopes: String, rsaKey: RSAKey): String {
     val now = Date.from(Instant.now())
     return JWTClaimsSet.Builder()
         .issuer(clientId)
         .audience(audience)
         .issueTime(now)
-        .expirationTime(Date.from(Instant.now().plusSeconds(60)))
+        .expirationTime(Date.from(Instant.now().plusSeconds(120)))
         .jwtID(UUID.randomUUID().toString())
         .claim(SCOPE, scopes)
         .build()

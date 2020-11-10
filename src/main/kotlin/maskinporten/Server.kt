@@ -41,22 +41,21 @@ fun createHttpServer(environment: Environment, applicationStatus: ApplicationSta
 @KtorExperimentalAPI
 fun Application.setupHttpServer(environment: Environment, applicationStatus: ApplicationStatus) {
 
-    log.info { "Application Profile running: ${environment.application.profile}" }
-
+    log.info { "Installing:" }
     val logLevel = Level.INFO
-    log.info { "Installing log level: $logLevel" }
+    log.info { "Log level -> $logLevel" }
     install(CallLogging) {
         level = logLevel
     }
-    log.info { "Installing Api-Exception handler" }
+    log.info { "Api exception handler" }
     install(StatusPages) {
         exceptionHandler()
     }
-    log.info { "Installing ObjectMapper" }
+    log.info { "ContentNegotiation Configuration" }
     install(ContentNegotiation) {
         register(ContentType.Application.Json, JacksonConverter(Jackson.defaultMapper))
     }
-    log.info { "Installing routes" }
+    log.info { "Routes" }
     install(Routing) {
         selfTest(
             readySelfTestCheck = { applicationStatus.initialized },
@@ -66,6 +65,10 @@ fun Application.setupHttpServer(environment: Environment, applicationStatus: App
     }
     applicationStatus.initialized = true
     log.info { "Application is up and running" }
+
+    // runBlocking {
+    //     ClientAuthentication(environment).tokenRequest()
+    // }
 }
 
 object Jackson {
@@ -75,3 +78,4 @@ object Jackson {
         defaultMapper.configure(SerializationFeature.INDENT_OUTPUT, true)
     }
 }
+

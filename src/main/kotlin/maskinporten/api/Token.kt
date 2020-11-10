@@ -7,18 +7,11 @@ import io.ktor.routing.Routing
 import io.ktor.routing.get
 import io.ktor.util.KtorExperimentalAPI
 import maskinporten.config.Environment
-import maskinporten.http.defaultHttpClient
 import maskinporten.token.ClientAuthentication
-import maskinporten.token.token
 
 @KtorExperimentalAPI
 fun Routing.token(env: Environment) {
     get("/token") {
-        val authentication = ClientAuthentication(env)
-        val tokenResponse = defaultHttpClient.token(
-            env.maskinporten.metadata.tokenEndpoint,
-            authentication.clientAssertion()
-        )
-        call.respond(HttpStatusCode.OK, tokenResponse)
+        call.respond(HttpStatusCode.OK, ClientAuthentication(env).tokenRequest())
     }
 }

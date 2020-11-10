@@ -27,7 +27,8 @@ fun startServer() {
         val app = AppConfiguration()
         val applicationStatus = app.applicationStatus
         val environment = app.environment
-        val dingsServer = createHttpServer(environment, applicationStatus)
+        log.info { "Application Profile: ${environment.application.profile}" }
+        val server = createHttpServer(environment, applicationStatus)
 
         DefaultExports.initialize()
         Runtime.getRuntime().addShutdownHook(
@@ -36,10 +37,10 @@ fun startServer() {
                     log.info { "Shutdown hook called, shutting down gracefully" }
                     applicationStatus.initialized = false
                     applicationStatus.running = false
-                    dingsServer.stop(1, 5)
+                    server.stop(1, 5)
                 }
             }
         )
-        dingsServer.start(wait = true)
+        server.start(wait = true)
     }
 }
