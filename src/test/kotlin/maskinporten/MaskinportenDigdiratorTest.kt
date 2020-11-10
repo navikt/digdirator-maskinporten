@@ -21,7 +21,7 @@ class MaskinportenDigdiratorTest {
 
     @KtorExperimentalAPI
     @Test
-    fun `a test`() {
+    fun `Generate, sign the JWT and make a request on token_endpoint to configured IDP`() {
         withMockOAuth2Server {
             val issuerId = "maskinporten"
             val environment = Environment(
