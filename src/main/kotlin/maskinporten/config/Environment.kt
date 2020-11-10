@@ -35,6 +35,7 @@ data class Environment(
         val port: Int = config.getOrElse(Key("application.port", intType), 8080),
     )
 
+    // TODO ikke bruk defaults. vi vill de skal feile hvis ikke varibel ikke eksisterer.
     data class Maskinporten(
         val wellKnownUrl: String = config.getOrElse(
             Key("maskinporten.well.known.url", stringType),
@@ -55,6 +56,7 @@ data class Environment(
     }
 }
 
+// TODO flytt til tester
 internal fun generateRsaKey(keyId: String = UUID.randomUUID().toString(), keySize: Int = 2048): RSAKey =
     KeyPairGenerator.getInstance("RSA").apply { initialize(keySize) }.generateKeyPair()
         .let {
