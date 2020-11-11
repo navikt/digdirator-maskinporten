@@ -1,8 +1,6 @@
 name: Deploy alerts to NAIS
 on:
   push:
-    branches:
-      - main
     paths:
       - '.nais/alerts.yml'
 jobs:
