@@ -4,8 +4,7 @@ on:
     branches:
       - master
     paths:
-      - '.nais/alerts.yaml'
-      - '.github/workflows/alerts.yaml'
+      - '.nais/alerts.yml'
 jobs:
   apply-alerts:
     name: Apply alerts to cluster
@@ -18,4 +17,4 @@ jobs:
         env:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           CLUSTER: dev-gcp
-          RESOURCE: .nais/alerts.yaml
+          RESOURCE: .nais/alerts.yml
