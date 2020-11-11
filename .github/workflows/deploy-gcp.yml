@@ -1,12 +1,6 @@
 name: Build - Push and Deploy
 
-on:
-  push:
-    branches:
-      - main
-  workflow_dispatch:
-    branch:
-      - main
+on: [push, workflow_dispatch]
 
 env:
   IMAGE: docker.pkg.github.com/${{ github.repository }}/digdirator-maskinporten:${{ github.sha }}
