@@ -2,9 +2,9 @@ apiVersion: "nais.io/v1"
 kind: "Alert"
 metadata:
   name: digdirator-maskinporten
-  namespace: platformsikkerhet
+  namespace: plattformsikkerhet
   labels:
-    team: platformsikkerhet
+    team: plattformsikkerhet
 spec:
   receivers: # receivers for all alerts below
     slack:
