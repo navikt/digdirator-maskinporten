@@ -1,7 +1,7 @@
 kind: Application
 apiVersion: nais.io/v1alpha1
 metadata:
-  name: maskinporten-digdirator
+  name: digdirator-maskinporten
   namespace: {{namespace}}
   labels:
     team: {{team}}
