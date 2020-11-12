@@ -2,3 +2,7 @@
 
 # Digdirator-Maskinporten
 Test application for k8s Controller Digdirator and Kind `MaskinportenClient`.  
+
+![overview][overview]
+
+[overview]: ./docs/sequence.png "Sequence diagram"
