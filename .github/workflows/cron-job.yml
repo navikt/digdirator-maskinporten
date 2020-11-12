@@ -20,12 +20,12 @@ jobs:
           CLUSTER: dev-gcp
           RESOURCE: .nais/gcp/naiserator-gcp.yml
           VARS: .nais/gcp/dev-gcp-vars.yml
-    - name: Slack Notification
-      if: ${{ failure() }}
-      uses: rtCamp/action-slack-notify@master
-      env:
-        SLACK_USERNAME: Digdirator Integration Test
-        SLACK_COLOR: '#FF0000'
-        SLACK_MESSAGE: ':scream: Check Cron Job Deployer'
-        SLACK_TITLE: Deployment faild
-        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+      - name: Slack Notification
+        if: ${{ failure() }}
+        uses: rtCamp/action-slack-notify@master
+        env:
+          SLACK_USERNAME: Digdirator Integration Test
+          SLACK_COLOR: '#FF0000'
+          SLACK_MESSAGE: ':scream: Check Cron Job Deployer'
+          SLACK_TITLE: Deployment faild
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
