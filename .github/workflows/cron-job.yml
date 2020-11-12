@@ -1,8 +1,8 @@
 name: Deploy Cron Job
 
-on:
-  schedule:
-    - cron: '*/10 * * * *'
+on: push
+ ## schedule:
+ ##   - cron: '*/10 * * * *'
 env:
   IMAGE: docker.pkg.github.com/${{ github.repository }}/digdirator-maskinporten:${{ github.sha }}
 

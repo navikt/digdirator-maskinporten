@@ -24,13 +24,22 @@ spec:
       expr: selftests_aggregate_result_status{app="digdirator-maskinporten"} > 0
       for: 1m
       action: "Sjekk app {{ $labels.app }} i namespace {{ $labels.kubernetes_namespace }} sine selftest for å se hva som er galt"
+      description: digdirator-maskinporten selftest feiler!
     - alert: Høy andel HTTP serverfeil (5xx responser)
       severity: danger
       expr: (100 * (sum by (backend) (rate(traefik_backend_requests_total{code=~"^5\\d\\d", backend=~"mydomain.nais.*/mycontextpath/*"}[3m])) / sum by (backend) (rate(traefik_backend_requests_total{backend=~"mydomain.nais.*/mycontextpath/*"}[3m])))) > 0
       for: 1m
       action: "Sjekk loggene for å se hvorfor {{ $labels.backend }} returnerer HTTP feilresponser"
+      description: digdirator-maskinporten server feiler med ukjent feil!
     - alert: Høy andel HTTP klientfeil (4xx responser)
       severity: warning
       expr: (100 * (sum by (backend) (rate(traefik_backend_requests_total{code=~"^4\\d\\d", backend=~"mydomain.nais.*/mycontextpath/*"}[3m])) / sum by (backend) (rate(traefik_backend_requests_total{backend=~"mydomain.nais.*/mycontextpath/*"}[3m])))) > 0
       for: 1m
+      description: digdirator-maskinporten feiler da den prøver å hente token!
       action: "Sjekk loggene for å se hvorfor {{ $labels.backend }} returnerer HTTP feilresponser"
+    - alert: Antall restarts
+      expr: sum by(container) (increase(kube_pod_container_status_restarts_total{container=~"tokendings"}[2m])) > 2
+      for: 5m
+      severity: danger
+      description: digdirator-maskinporten har restartet flere ganger siste 2 min!
+      action: Se `kubectl describe pod tokendings` for events, og `kubectl logs -l app=tokendings` for logger
