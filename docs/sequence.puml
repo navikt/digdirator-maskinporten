@@ -1,32 +1,37 @@
 @startuml component
-title Digdirator Integration Test Sequence Flow
+title Digdirator-Maskinporten Canary Sequence Flow
 skinparam maxMessageSize 300
 autonumber
 
 entity github as "Github"
 control digdirator as "Digdirator"
-participant secret as "Secret(K8s)"
+participant nais as "nais"
 participant application as "Application"
 participant slack as "Slack"
+participant prom as "Prometheus"
 
 group Github
-github -> application: trigger integration. 10 min interval
-group Deploy Fail or Cancelled
-github -> slack: POST message (3 min timeout)
-end
+github -> application: trigger integration (10 min interval)
+    group Deploy Fail | Cancelled
+    github -> slack: POST message (3 min timeout)
+    end
 end
 
 group Digdirator
-    digdirator -> secret: get currents private JWK(s)
+    digdirator -> nais: get currents private JWK(s)
     digdirator -> digdirator: rotate private JWK(s)
     digdirator -> digdir: update public JWKS set
-    digdirator -> secret: inject private JWK and metadata
+    digdirator -> nais: inject private JWK and metadata
 end
 
- secret -> application: mount
+nais -> application: mount secret and metadata
 
 ==Maskinporten==
 group Application
+    group Unhealthy
+        application -> application: pod restarts
+        nais -> prom: alerts
+    end
     application -> application: start create and sign JWT
     application -> digdir: request tokken with signed JWT
     digdir -> application: access_token

@@ -1,6 +1,12 @@
 name: Deploy Cron Job
 
-on: push
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - '**/README.md'
+      - 'docs/**'
  ## schedule:
  ##   - cron: '*/10 * * * *'
 env:
