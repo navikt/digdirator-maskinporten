@@ -1,13 +1,13 @@
 // Common
 val kotlinVersion = "1.4.10"
-val ktorVersion = "1.4.1"
+val ktorVersion = "1.4.2"
 val kotlinxVersion = "1.4.1"
 val jacksonVersion = "2.11.2"
 val konfigVersion = "1.6.10.0"
 // Oauth2
 val nimbusOIDC = "8.25"
 val nimbusJoseVersion = "9.1.2"
-// Log
+// Log & Metric
 val apacheCommonsVersion = "3.11"
 val logstashEncoderVersion = "6.4"
 val logbackVersion = "1.2.3"
@@ -15,7 +15,6 @@ val ioPrometheusVersion = "0.9.0"
 val kotlinloggingVersion = "2.0.3"
 // Test
 val kluentVersion = "1.63"
-val wiremockVersion = "2.27.2"
 val mockOauth = "0.2.0"
 val junitJupiterVersion = "5.7.0"
 
@@ -83,7 +82,6 @@ dependencies {
         exclude(group = "org.eclipse.jetty")
     }
     testImplementation("org.amshove.kluent:kluent:$kluentVersion")
-    testImplementation ("com.github.tomakehurst:wiremock:$wiremockVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion")
 }

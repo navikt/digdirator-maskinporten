@@ -42,7 +42,7 @@ spec:
  # maskinporten:
  #   enabled: true
  #   scopes:
- #     - nav:scope
+ #     - nav:test/api
   env:
   {{#each env}}
     - name: "{{this.name}}"

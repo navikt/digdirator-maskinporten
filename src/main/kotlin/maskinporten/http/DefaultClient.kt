@@ -17,10 +17,10 @@ import io.ktor.http.ContentType
 import io.ktor.http.parametersOf
 import io.ktor.util.KtorExperimentalAPI
 import maskinporten.token.AccessTokenResponse
-import maskinporten.token.GRANT_TYPE
+import maskinporten.token.ClientAuthentication.Companion.GRANT_TYPE
+import maskinporten.token.ClientAuthentication.Companion.PARAMS_CLIENT_ASSERTION
+import maskinporten.token.ClientAuthentication.Companion.PARAMS_GRANT_TYPE
 import maskinporten.token.OauthServerConfigurationMetadata
-import maskinporten.token.PARAMS_CLIENT_ASSERTION
-import maskinporten.token.PARAMS_GRANT_TYPE
 import mu.KotlinLogging
 
 private val log = KotlinLogging.logger { }
@@ -54,7 +54,7 @@ private suspend fun ClientRequestException.handle(url: String) {
     log.error { "Error Response: $responseMessage" }
 }
 
-internal suspend fun HttpClient.getOAuthServerConfigurationMetadata(url: String) =
+internal suspend fun HttpClient.configurationMetadata(url: String) =
     withLogAndErrorHandling("Requesting oauth server configuration metadata", url) {
         this.get<OauthServerConfigurationMetadata> {
             url(url)
@@ -62,6 +62,7 @@ internal suspend fun HttpClient.getOAuthServerConfigurationMetadata(url: String)
         }.also { log.info { "Metadata: $it" } }
     }
 
+@KtorExperimentalAPI
 suspend fun HttpClient.token(url: String, assertion: String) =
     withLogAndErrorHandling("Requesting token from", url) {
         this.submitForm<AccessTokenResponse>(

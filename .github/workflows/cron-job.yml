@@ -1,0 +1,18 @@
+name: Deploy Cron Job
+
+on:
+  schedule:
+    - cron: '*/10 * * * *'
+
+deploy-dev-gcp:
+  name: Deploy to dev-gcp
+  needs: build
+  runs-on: ubuntu-latest
+  steps:
+    - uses: actions/checkout@v2
+    - uses: nais/deploy/actions/deploy@v1
+      env:
+        APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
+        CLUSTER: dev-gcp
+        RESOURCE: .nais/gcp/naiserator-gcp.yml
+        VARS: .nais/gcp/dev-gcp-vars.yml

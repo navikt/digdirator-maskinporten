@@ -3,11 +3,11 @@ package maskinporten
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.nimbusds.jwt.JWTParser
 import io.ktor.application.Application
 import io.ktor.application.install
 import io.ktor.features.CallLogging
 import io.ktor.features.ContentNegotiation
-import io.ktor.features.StatusPages
 import io.ktor.http.ContentType
 import io.ktor.jackson.JacksonConverter
 import io.ktor.request.path
@@ -16,12 +16,15 @@ import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.server.netty.NettyApplicationEngine
 import io.ktor.util.KtorExperimentalAPI
-import maskinporten.api.handler.exceptionHandler
+import kotlinx.coroutines.runBlocking
 import maskinporten.api.selfTest
 import maskinporten.api.token
 import maskinporten.config.Environment
+import maskinporten.token.AccessTokenResponse
+import maskinporten.token.ClientAuthentication
 import mu.KotlinLogging
 import org.slf4j.event.Level
+import java.text.ParseException
 
 private val log = KotlinLogging.logger { }
 
@@ -41,17 +44,12 @@ fun createHttpServer(environment: Environment, applicationStatus: ApplicationSta
 
 @KtorExperimentalAPI
 fun Application.setupHttpServer(environment: Environment, applicationStatus: ApplicationStatus) {
-
     log.info { "Installing:" }
     val logLevel = Level.INFO
     log.info { "Log level -> $logLevel" }
     install(CallLogging) {
         level = logLevel
         filter { call -> call.request.path().startsWith("/token") }
-    }
-    log.info { "Api exception handler" }
-    install(StatusPages) {
-        exceptionHandler()
     }
     log.info { "ContentNegotiation Configuration" }
     install(ContentNegotiation) {
@@ -65,12 +63,8 @@ fun Application.setupHttpServer(environment: Environment, applicationStatus: App
         )
         token(environment)
     }
+    getTokenAndValidate(environment)
     applicationStatus.initialized = true
-    log.info { "Application is up and running" }
-
-    // runBlocking {
-    //     ClientAuthentication(environment).tokenRequest()
-    // }
 }
 
 object Jackson {
@@ -81,3 +75,25 @@ object Jackson {
     }
 }
 
+@KtorExperimentalAPI
+fun getTokenAndValidate(environment: Environment) {
+    runBlocking {
+        val jwt = ClientAuthentication(environment).tokenRequest().parseResponseJwt()
+        val metadataIssuer = environment.maskinporten.metadata.issuer
+        val iss = jwt.jwtClaimsSet.getStringClaim("iss")
+        val clientId = jwt.jwtClaimsSet.getStringClaim("client_id")
+        if (metadataIssuer == iss) {
+            log.info { "Application got token from iss: $iss with client: $clientId and is ready to run" }
+        } else {
+            log.error { "Application could not get token, shutting down.." }
+        }
+    }
+}
+
+internal fun AccessTokenResponse.parseResponseJwt() =
+    try {
+        JWTParser.parse(this.accessToken)
+    } catch (p: ParseException) {
+        log.error { "Could not parse response token" }
+        throw p
+    }

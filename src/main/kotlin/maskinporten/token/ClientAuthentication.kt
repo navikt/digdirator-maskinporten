@@ -11,15 +11,13 @@ import io.ktor.util.KtorExperimentalAPI
 import maskinporten.config.Environment
 import maskinporten.http.defaultHttpClient
 import maskinporten.http.token
+import maskinporten.token.ClientAuthentication.Companion.SCOPE
 import mu.KotlinLogging
 import java.time.Instant
-import java.util.*
+import java.util.UUID
+import java.util.Date
 
 private val log = KotlinLogging.logger { }
-internal const val SCOPE = "scope"
-internal const val GRANT_TYPE = "urn:ietf:params:oauth:grant-type:jwt-bearer"
-internal const val PARAMS_GRANT_TYPE = "grant_type"
-internal const val PARAMS_CLIENT_ASSERTION = "assertion"
 
 @KtorExperimentalAPI
 class ClientAuthentication(
@@ -33,7 +31,7 @@ class ClientAuthentication(
             clientAssertion()
         )
 
-    private fun clientAssertion(): String {
+    fun clientAssertion(): String {
         // println(rsaKey)
         // println(objectMapper.writeValueAsString(JWKSet(rsaKey).toJSONObject(true)))
         return clientAssertion(
@@ -43,13 +41,21 @@ class ClientAuthentication(
             rsaKey
         ).also {
             log.info {
-                "Keys with keyID: ${rsaKey.keyID}. " +
-                    "Generating JWT token for integration with: ${env.maskinporten.metadata.issuer}"
+                "JWK with keyID: ${rsaKey.keyID} used to sign " +
+                    "generated JWT for integration with: ${env.maskinporten.metadata.issuer}"
             }
         }
     }
+
+    companion object {
+        const val SCOPE = "scope"
+        const val GRANT_TYPE = "urn:ietf:params:oauth:grant-type:jwt-bearer"
+        const val PARAMS_GRANT_TYPE = "grant_type"
+        const val PARAMS_CLIENT_ASSERTION = "assertion"
+    }
 }
 
+@KtorExperimentalAPI
 internal fun clientAssertion(clientId: String, audience: String, scopes: String, rsaKey: RSAKey): String {
     val now = Date.from(Instant.now())
     return JWTClaimsSet.Builder()

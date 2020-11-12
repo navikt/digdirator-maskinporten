@@ -2,9 +2,12 @@ package maskinporten
 
 import io.ktor.util.KtorExperimentalAPI
 import io.prometheus.client.hotspot.DefaultExports
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import maskinporten.config.Environment
 import mu.KotlinLogging
+import kotlin.system.exitProcess
 
 private val log = KotlinLogging.logger { }
 
@@ -28,19 +31,33 @@ fun startServer() {
         val applicationStatus = app.applicationStatus
         val environment = app.environment
         log.info { "Application Profile: ${environment.application.profile}" }
-        val server = createHttpServer(environment, applicationStatus)
+        val server =
+            createHttpServer(environment, applicationStatus)
+                .start(wait = false)
 
         DefaultExports.initialize()
-        Runtime.getRuntime().addShutdownHook(
-            Thread {
+        try {
+            val job = launch {
+                while (app.applicationStatus.running) {
+                    delay(100)
+                }
+            }
+
+            Runtime.getRuntime().addShutdownHook(
                 Thread {
                     log.info { "Shutdown hook called, shutting down gracefully" }
                     applicationStatus.initialized = false
                     applicationStatus.running = false
-                    server.stop(1, 5)
+                    server.stop(5000, 5000)
                 }
-            }
-        )
-        server.start(wait = true)
+            )
+
+            app.applicationStatus.initialized = true
+            log.info { "Application ready" }
+
+            job.join()
+        } finally {
+            exitProcess(1)
+        }
     }
 }

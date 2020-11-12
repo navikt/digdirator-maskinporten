@@ -1,0 +1,29 @@
+@startuml component
+title Digdirator Integration Test Sequence Flow
+skinparam maxMessageSize 300
+autonumber
+
+entity github as "Github"
+control digdirator as "Digdirator"
+participant secret as "Secret"
+participant application as "Application"
+
+github -> application: trigger integration. 10 min interval
+
+group Digdirator
+    digdirator -> secret: get currents private JWK(s)
+    digdirator -> digdirator: rotate private JWK(s)
+    digdirator -> digdir: update public JWKS set
+    digdirator -> secret: inject private JWK and metadata
+end
+
+ secret -> application: mount
+
+==Maskinporten==
+group Application
+    application -> application: start create and sign JWT
+    application -> digdir: request tokken with signed JWT
+    digdir -> application: access_token
+end
+
+@enduml
