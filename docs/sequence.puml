@@ -5,10 +5,16 @@ autonumber
 
 entity github as "Github"
 control digdirator as "Digdirator"
-participant secret as "Secret"
+participant secret as "Secret(K8s)"
 participant application as "Application"
+participant slack as "Slack"
 
+group Github
 github -> application: trigger integration. 10 min interval
+group Deploy Fail or Cancelled
+github -> slack: POST message (3 min timeout)
+end
+end
 
 group Digdirator
     digdirator -> secret: get currents private JWK(s)
