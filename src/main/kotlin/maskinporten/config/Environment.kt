@@ -30,7 +30,7 @@ data class Environment(
     data class Maskinporten(
         val wellKnownUrl: String = config[Key("maskinporten.well.known.url", stringType)],
         val clientId: String = config[Key("maskinporten.client.id", stringType)],
-        val privateJwk: String = config[Key("maskinporten.private.jwk", stringType)],
+        val privateJwk: String = config[Key("maskinporten.client.jwk", stringType)],
         val scopes: String = config[Key("maskinporten.scopes", stringType)],
     ) {
         @KtorExperimentalAPI
