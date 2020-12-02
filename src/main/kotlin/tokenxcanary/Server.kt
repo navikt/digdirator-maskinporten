@@ -15,15 +15,19 @@ import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.server.netty.NettyApplicationEngine
 import io.ktor.util.KtorExperimentalAPI
-import tokenxcanary.api.selfTest
-import tokenxcanary.api.token
-import tokenxcanary.common.getTokenAndValidate
-import tokenxcanary.common.setCurrent
-import tokenxcanary.config.Environment
-import tokenxcanary.redis.Cache
-import tokenxcanary.token.ClientAuthentication
+import kotlinx.coroutines.runBlocking
 import mu.KotlinLogging
 import org.slf4j.event.Level
+import tokenxcanary.api.selfTest
+import tokenxcanary.api.token
+import tokenxcanary.common.parseResponseJwt
+import tokenxcanary.common.setCurrent
+import tokenxcanary.common.validate
+import tokenxcanary.config.Environment
+import tokenxcanary.redis.Cache
+import tokenxcanary.token.Authentication
+import tokenxcanary.token.MaskinportenClient
+import tokenxcanary.token.OAuth2TokenRequest
 
 private val log = KotlinLogging.logger { }
 
@@ -44,7 +48,8 @@ fun createHttpServer(environment: Environment, applicationStatus: ApplicationSta
 @KtorExperimentalAPI
 fun Application.setupHttpServer(environment: Environment, applicationStatus: ApplicationStatus) {
 
-    val maskinporten = environment.maskinporten
+    val maskinportenEnv = environment.maskinporten
+    val tokenDingsEnv = environment.tokenX
 
     log.info { "Installing:" }
     val logLevel = Level.INFO
@@ -59,10 +64,11 @@ fun Application.setupHttpServer(environment: Environment, applicationStatus: App
     }
 
     log.info { "Client Authentication" }
-    val auth = ClientAuthentication(maskinporten)
+    val maskinportenAuth = Authentication(maskinportenEnv)
+    // val tokendignsAuth = Authentication(tokenDingsEnv)
 
     log.info { "Cache" }
-    Cache(environment).setCurrent(maskinporten.clientJwk)
+    Cache(environment).setCurrent(maskinportenEnv.clientJwk)
 
     log.info { "Routes" }
     install(Routing) {
@@ -70,10 +76,25 @@ fun Application.setupHttpServer(environment: Environment, applicationStatus: App
             readySelfTestCheck = { applicationStatus.initialized },
             aLiveSelfTestCheck = { applicationStatus.running }
         )
-        token(maskinporten)
+        token(maskinportenEnv)
     }
 
-    getTokenAndValidate(maskinporten.metadata.issuer, auth)
+    val oAuth2TokenRequest = OAuth2TokenRequest(
+        clientAssertion = maskinportenAuth.assertion(maskinportenEnv.scopes),
+        tokenEndpoint = maskinportenEnv.metadata.tokenEndpoint
+    )
+
+    val maskinportenTokenResponse = runBlocking {
+        MaskinportenClient.tokenRequest(oAuth2TokenRequest)
+    }
+
+    //  val tokenDingsJwt = runBlocking {
+    //      maskinportenAuth.tokenRequest().parseResponseJwt()
+    //  }
+
+    validate(maskinportenEnv.metadata.issuer, maskinportenTokenResponse.parseResponseJwt())
+    // validate(tokenDingsEnv.metadata.issuer, tokenDingsJwt)
+
     applicationStatus.initialized = true
 }
 

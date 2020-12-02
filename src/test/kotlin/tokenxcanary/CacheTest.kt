@@ -1,13 +1,13 @@
 package tokenxcanary
 
 import io.ktor.util.KtorExperimentalAPI
-import tokenxcanary.common.setCurrent
-import tokenxcanary.redis.Cache
 import org.amshove.kluent.shouldBe
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldNotBeEqualTo
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import tokenxcanary.common.setCurrent
+import tokenxcanary.redis.Cache
 
 @KtorExperimentalAPI
 class CacheTest {
@@ -15,7 +15,7 @@ class CacheTest {
     @Test
     fun `Redis get and set cached jwk`() {
         withMockOAuth2Server {
-            val environment = testEnvironment(this.wellKnownUrl(issuerId = "maskinporten").toString())
+            val environment = testEnvironment(this)
             val cache = Cache(environment)
             val jwk = generateRsaKey().toJSONString()
             cache.get() shouldBe null
@@ -27,7 +27,7 @@ class CacheTest {
     @Test
     fun `Set Current cache with every deploy, check that cache is rotated`() {
         withMockOAuth2Server {
-            val environment = testEnvironment(this.wellKnownUrl(issuerId = "maskinporten").toString())
+            val environment = testEnvironment(this)
             val cache = Cache(environment)
             val jwk = generateRsaKey().toJSONString()
             cache.get() shouldBe null

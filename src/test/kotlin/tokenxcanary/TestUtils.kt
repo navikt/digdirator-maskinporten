@@ -6,12 +6,12 @@ import com.nimbusds.jose.jwk.RSAKey
 import com.nimbusds.jwt.JWTParser
 import io.ktor.application.Application
 import io.ktor.util.KtorExperimentalAPI
-import tokenxcanary.config.Environment
-import tokenxcanary.http.objectMapper
 import no.nav.security.mock.oauth2.MockOAuth2Server
 import no.nav.security.mock.oauth2.token.DefaultOAuth2TokenCallback
 import org.testcontainers.containers.GenericContainer
 import org.testcontainers.utility.DockerImageName
+import tokenxcanary.config.Environment
+import tokenxcanary.http.objectMapper
 import java.security.KeyPairGenerator
 import java.security.interfaces.RSAPrivateKey
 import java.security.interfaces.RSAPublicKey
@@ -71,11 +71,16 @@ internal object RedisContainer {
     }
 }
 
-internal fun testEnvironment(wellknown: String) = Environment(
+internal fun testEnvironment(mockOAuth2Server: MockOAuth2Server) = Environment(
     maskinporten = Environment.Maskinporten(
-        wellKnownUrl = wellknown,
+        wellKnownUrl = mockOAuth2Server.wellKnownUrl(issuerId = "maskinporten").toString(),
         clientJwk = objectMapper.writeValueAsString(generateRsaKey().toJSONObject()),
         scopes = "scope1 scope2",
+        clientId = "clientId"
+    ),
+    tokenX = Environment.TokenX(
+        wellKnownUrl = mockOAuth2Server.wellKnownUrl(issuerId = "tokenx").toString(),
+        clientJwk = objectMapper.writeValueAsString(generateRsaKey().toJSONObject()),
         clientId = "clientId"
     ),
     redis = Environment.Redis(

@@ -1,13 +1,12 @@
 package tokenxcanary.common
 
 import com.nimbusds.jose.jwk.RSAKey
+import com.nimbusds.jwt.JWT
 import com.nimbusds.jwt.JWTParser
 import io.ktor.util.KtorExperimentalAPI
-import kotlinx.coroutines.runBlocking
+import mu.KotlinLogging
 import tokenxcanary.redis.Cache
 import tokenxcanary.token.AccessTokenResponse
-import tokenxcanary.token.ClientAuthentication
-import mu.KotlinLogging
 import java.text.ParseException
 
 private val log = KotlinLogging.logger { }
@@ -26,17 +25,14 @@ fun Cache.setCurrent(currentJwk: String) {
 }
 
 @KtorExperimentalAPI
-internal fun getTokenAndValidate(issuer: String, auth: ClientAuthentication) {
-    runBlocking {
-        val jwt = auth.tokenRequest().parseResponseJwt()
-        val iss = jwt.jwtClaimsSet.getStringClaim("iss")
-        val clientId = jwt.jwtClaimsSet.getStringClaim("client_id")
-        if (issuer == iss) {
-            log.info { "Application got token from iss: $iss with client: $clientId and is ready to run" }
-        } else {
-            log.error { "Application could not get token, shutting down.." }
-            throw RuntimeException()
-        }
+internal fun validate(issuer: String, jwt: JWT) {
+    val iss = jwt.jwtClaimsSet.getStringClaim("iss")
+    val clientId = jwt.jwtClaimsSet.getStringClaim("client_id")
+    if (issuer == iss) {
+        log.info { "Application got token from iss: $iss with client: $clientId and is ready to run" }
+    } else {
+        log.error { "Application could not get token, shutting down.." }
+        throw RuntimeException()
     }
 }
 

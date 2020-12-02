@@ -2,24 +2,24 @@ package tokenxcanary
 
 import com.nimbusds.jwt.JWT
 import io.ktor.util.KtorExperimentalAPI
-import tokenxcanary.redis.Cache
-import tokenxcanary.token.ClientAuthentication
 import org.amshove.kluent.`should be instance of`
 import org.amshove.kluent.shouldBeEqualTo
 import org.hamcrest.MatcherAssert
 import org.junit.jupiter.api.Test
+import tokenxcanary.redis.Cache
+import tokenxcanary.token.Authentication
 import java.time.Instant
 import java.util.Date
 
 @KtorExperimentalAPI
-class ClientAuthenticationTest {
+class AuthenticationTest {
 
     @Test
     fun `Generate, sign and Validate JWT`() {
         withMockOAuth2Server {
-            val environment = testEnvironment(this.wellKnownUrl(issuerId = "maskinporten").toString())
+            val environment = testEnvironment(this)
             Cache(environment)
-            val assertion = ClientAuthentication(environment.maskinporten).clientAssertion()
+            val assertion = Authentication(environment.maskinporten).assertion(environment.maskinporten.scopes)
             val parsedToken = parse(assertion)
             val claimsSet = parsedToken.jwtClaimsSet
             parsedToken `should be instance of` JWT::class

@@ -20,6 +20,7 @@ private val config: Configuration =
 data class Environment(
     val application: Application = Application(),
     val maskinporten: Maskinporten = Maskinporten(),
+    val tokenX: TokenX = TokenX(),
     val redis: Redis = Redis()
 ) {
 
@@ -29,13 +30,25 @@ data class Environment(
     )
 
     data class Maskinporten(
-        val wellKnownUrl: String = config[Key("maskinporten.well.known.url", stringType)],
-        val clientId: String = config[Key("maskinporten.client.id", stringType)],
-        val clientJwk: String = config[Key("maskinporten.client.jwk", stringType)],
+        override val wellKnownUrl: String = config[Key("maskinporten.well.known.url", stringType)],
+        override val clientId: String = config[Key("maskinporten.client.id", stringType)],
+        override val clientJwk: String = config[Key("maskinporten.client.jwk", stringType)],
         val scopes: String = config[Key("maskinporten.scopes", stringType)],
-    ) {
+    ) : ClientProperties {
         @KtorExperimentalAPI
-        val metadata: OauthServerConfigurationMetadata =
+        override val metadata: OauthServerConfigurationMetadata =
+            runBlocking {
+                defaultHttpClient.configurationMetadata(wellKnownUrl)
+            }
+    }
+
+    data class TokenX(
+        override val wellKnownUrl: String = config[Key("token.x.well.known.url", stringType)],
+        override val clientId: String = config[Key("token.x.client.id", stringType)],
+        override val clientJwk: String = config[Key("token.x.client.jwk", stringType)]
+    ) : ClientProperties {
+        @KtorExperimentalAPI
+        override val metadata: OauthServerConfigurationMetadata =
             runBlocking {
                 defaultHttpClient.configurationMetadata(wellKnownUrl)
             }
@@ -48,6 +61,12 @@ data class Environment(
     )
 }
 
+interface ClientProperties {
+    val wellKnownUrl: String
+    val clientId: String
+    val clientJwk: String
+    val metadata: OauthServerConfigurationMetadata
+}
 enum class Profile(val value: String) {
     TEST("TEST")
 }

@@ -7,21 +7,21 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.handleRequest
 import io.ktor.server.testing.withTestApplication
 import io.ktor.util.KtorExperimentalAPI
-import tokenxcanary.http.objectMapper
-import tokenxcanary.token.AccessTokenResponse
 import org.amshove.kluent.shouldBeEqualTo
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Test
+import tokenxcanary.http.objectMapper
+import tokenxcanary.token.AccessTokenResponse
 import kotlin.test.fail
 
 @KtorExperimentalAPI
-class MaskinportenDigdiratorTest {
+class MaskinportenClientDigdiratorTest {
 
     @Test
     fun `Generate and sign an JWT and make a successful request on token_endpoint to configured IDP`() {
         withMockOAuth2Server {
             val mockOAuth2Server = this
-            val environment = testEnvironment(this.wellKnownUrl(issuerId = "maskinporten").toString())
+            val environment = testEnvironment(this)
             withTestApplication({
                 testApplication(mockOAuth2Server, environment)
             }) {

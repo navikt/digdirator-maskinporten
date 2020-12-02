@@ -1,8 +1,8 @@
 package tokenxcanary.redis
 
+import redis.clients.jedis.Jedis
 import tokenxcanary.config.Environment
 import tokenxcanary.config.Profile
-import redis.clients.jedis.Jedis
 
 class Cache(
     env: Environment

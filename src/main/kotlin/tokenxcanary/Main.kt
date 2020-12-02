@@ -5,8 +5,8 @@ import io.prometheus.client.hotspot.DefaultExports
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import tokenxcanary.config.Environment
 import mu.KotlinLogging
+import tokenxcanary.config.Environment
 import kotlin.system.exitProcess
 
 private val log = KotlinLogging.logger { }

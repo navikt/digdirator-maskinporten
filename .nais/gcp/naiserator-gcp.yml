@@ -15,6 +15,7 @@ spec:
       {{/each}}
       rules:
         - application: token-x-canary-dings-redis
+        - application: api-dings
   ingresses:
     {{#each ingresses}}
      - "{{this}}"
@@ -41,6 +42,8 @@ spec:
       cpu: 600m
       memory: 1Gi
   cpuThresholdPercentage: 80
+  tokenx:
+    enabled: true
   maskinporten:
     enabled: true
     scopes:

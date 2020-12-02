@@ -9,19 +9,13 @@ import io.ktor.client.features.ClientRequestException
 import io.ktor.client.features.json.JacksonSerializer
 import io.ktor.client.features.json.JsonFeature
 import io.ktor.client.request.accept
-import io.ktor.client.request.forms.submitForm
 import io.ktor.client.request.get
 import io.ktor.client.request.url
 import io.ktor.client.statement.readText
 import io.ktor.http.ContentType
-import io.ktor.http.parametersOf
 import io.ktor.util.KtorExperimentalAPI
-import tokenxcanary.token.AccessTokenResponse
-import tokenxcanary.token.ClientAuthentication.Companion.GRANT_TYPE
-import tokenxcanary.token.ClientAuthentication.Companion.PARAMS_CLIENT_ASSERTION
-import tokenxcanary.token.ClientAuthentication.Companion.PARAMS_GRANT_TYPE
-import tokenxcanary.token.OauthServerConfigurationMetadata
 import mu.KotlinLogging
+import tokenxcanary.token.OauthServerConfigurationMetadata
 
 private val log = KotlinLogging.logger { }
 
@@ -60,16 +54,4 @@ internal suspend fun HttpClient.configurationMetadata(url: String) =
             url(url)
             accept(ContentType.Application.Json)
         }.also { log.info { "Metadata: $it" } }
-    }
-
-@KtorExperimentalAPI
-suspend fun HttpClient.token(url: String, assertion: String) =
-    withLogAndErrorHandling("Requesting token from", url) {
-        this.submitForm<AccessTokenResponse>(
-            url = url,
-            formParameters = parametersOf(
-                PARAMS_CLIENT_ASSERTION to listOf(assertion),
-                PARAMS_GRANT_TYPE to listOf(GRANT_TYPE)
-            )
-        )
     }
