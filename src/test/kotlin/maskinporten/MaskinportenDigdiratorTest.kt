@@ -21,7 +21,7 @@ class MaskinportenDigdiratorTest {
     fun `Generate and sign an JWT and make a successful request on token_endpoint to configured IDP`() {
         withMockOAuth2Server {
             val mockOAuth2Server = this
-            val environment = testEnvironment(mockOAuth2Server)
+            val environment = testEnvironment(this.wellKnownUrl(issuerId = "maskinporten").toString())
             withTestApplication({
                 testApplication(mockOAuth2Server, environment)
             }) {

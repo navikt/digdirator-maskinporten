@@ -18,7 +18,7 @@ class ObservabilityTest {
             withTestApplication({
                 testApplication(
                     mockOAuth2Server = mockOAuth2Server,
-                    environment = testEnvironment(mockOAuth2Server = mockOAuth2Server)
+                    environment = testEnvironment(mockOAuth2Server.wellKnownUrl(issuerId = "maskinporten").toString())
                 )
             }) {
                 with(handleRequest(HttpMethod.Get, "/isReady")) {
@@ -35,7 +35,7 @@ class ObservabilityTest {
             withTestApplication({
                 testApplication(
                     mockOAuth2Server = mockOAuth2Server,
-                    environment = testEnvironment(mockOAuth2Server = mockOAuth2Server)
+                    environment = testEnvironment(mockOAuth2Server.wellKnownUrl(issuerId = "maskinporten").toString())
                 )
             }) {
                 with(handleRequest(HttpMethod.Get, "/isAlive")) {
@@ -52,7 +52,7 @@ class ObservabilityTest {
             withTestApplication({
                 testApplication(
                     mockOAuth2Server = mockOAuth2Server,
-                    environment = testEnvironment(mockOAuth2Server),
+                    environment = testEnvironment(mockOAuth2Server.wellKnownUrl(issuerId = "maskinporten").toString()),
                     running = false
                 )
             }) {

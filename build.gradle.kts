@@ -1,27 +1,25 @@
-// Common
-val kotlinVersion = "1.4.10"
+val kotlinVersion = "1.4.20"
 val ktorVersion = "1.4.2"
 val kotlinxVersion = "1.4.1"
 val jacksonVersion = "2.11.2"
 val konfigVersion = "1.6.10.0"
-// Oauth2
-val nimbusOIDC = "8.25"
+val nimbusOIDC = "8.26"
 val nimbusJoseVersion = "9.1.2"
-// Log & Metric
 val apacheCommonsVersion = "3.11"
 val logstashEncoderVersion = "6.4"
 val logbackVersion = "1.2.3"
 val ioPrometheusVersion = "0.9.0"
 val kotlinloggingVersion = "2.0.3"
-// Test
-val kluentVersion = "1.63"
-val mockOauth = "0.2.0"
+val redisVersion = "3.3.0"
+val kluentVersion = "1.64"
+val mockOauth = "0.2.1"
 val junitJupiterVersion = "5.7.0"
+val testcontainersVersion = "1.15.0"
 
 val mainClassName = "maskinporten.MainKt"
 
 plugins {
-    kotlin("jvm") version "1.4.10"
+    kotlin("jvm") version "1.4.20"
     java
     id("org.jmailen.kotlinter") version "3.2.0"
     id("com.github.ben-manes.versions") version "0.36.0"
@@ -77,6 +75,8 @@ dependencies {
     implementation ("io.prometheus:simpleclient_hotspot:$ioPrometheusVersion")
     implementation ("io.prometheus:simpleclient_common:$ioPrometheusVersion")
     implementation ("io.github.microutils:kotlin-logging:$kotlinloggingVersion")
+    implementation ("redis.clients:jedis:$redisVersion")
+    testImplementation("org.testcontainers:testcontainers:$testcontainersVersion")
     testImplementation ("no.nav.security:mock-oauth2-server:$mockOauth")
     testImplementation("io.ktor:ktor-server-test-host:$ktorVersion") {
         exclude(group = "org.eclipse.jetty")

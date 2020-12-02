@@ -10,6 +10,8 @@ import maskinporten.config.Environment
 import maskinporten.http.objectMapper
 import no.nav.security.mock.oauth2.MockOAuth2Server
 import no.nav.security.mock.oauth2.token.DefaultOAuth2TokenCallback
+import org.testcontainers.containers.GenericContainer
+import org.testcontainers.utility.DockerImageName
 import java.security.KeyPairGenerator
 import java.security.interfaces.RSAPrivateKey
 import java.security.interfaces.RSAPublicKey
@@ -60,12 +62,26 @@ internal fun generateRsaKey(keyId: String = UUID.randomUUID().toString(), keySiz
                 .build()
         }
 
-internal fun testEnvironment(mockOAuth2Server: MockOAuth2Server) = Environment(
+internal object RedisContainer {
+    val instance by lazy {
+        GenericContainer<Nothing>(DockerImageName.parse("redis:6.0.9")).apply {
+            withExposedPorts(6379)
+            start()
+        }
+    }
+}
+
+internal fun testEnvironment(wellknown: String) = Environment(
     maskinporten = Environment.Maskinporten(
-        wellKnownUrl = mockOAuth2Server.wellKnownUrl(issuerId = "maskinporten").toString(),
-        privateJwk = objectMapper.writeValueAsString(generateRsaKey().toJSONObject()),
+        wellKnownUrl = wellknown,
+        clientJwk = objectMapper.writeValueAsString(generateRsaKey().toJSONObject()),
         scopes = "scope1 scope2",
         clientId = "clientId"
+    ),
+    redis = Environment.Redis(
+        host = RedisContainer.instance.host,
+        port = RedisContainer.instance.firstMappedPort,
+        password = "password"
     )
 )
 

@@ -8,6 +8,7 @@ import com.nimbusds.jose.jwk.RSAKey
 import com.nimbusds.jwt.JWTClaimsSet
 import com.nimbusds.jwt.SignedJWT
 import io.ktor.util.KtorExperimentalAPI
+import maskinporten.common.parseToRsaKey
 import maskinporten.config.Environment
 import maskinporten.http.defaultHttpClient
 import maskinporten.http.token
@@ -21,28 +22,26 @@ private val log = KotlinLogging.logger { }
 
 @KtorExperimentalAPI
 class ClientAuthentication(
-    private val env: Environment
+    private val maskinporten: Environment.Maskinporten
 ) {
-    private val rsaKey = RSAKey.parse(env.maskinporten.privateJwk)
+    private val rsaKey = maskinporten.clientJwk.parseToRsaKey()
 
     suspend fun tokenRequest() =
         defaultHttpClient.token(
-            env.maskinporten.metadata.tokenEndpoint,
+            maskinporten.metadata.tokenEndpoint,
             clientAssertion()
         )
 
     fun clientAssertion(): String {
-        // println(rsaKey)
-        // println(objectMapper.writeValueAsString(JWKSet(rsaKey).toJSONObject(true)))
         return clientAssertion(
-            env.maskinporten.clientId,
-            env.maskinporten.metadata.issuer,
-            env.maskinporten.scopes,
+            maskinporten.clientId,
+            maskinporten.metadata.issuer,
+            maskinporten.scopes,
             rsaKey
         ).also {
             log.info {
                 "JWK with keyID: ${rsaKey.keyID} used to sign " +
-                    "generated JWT for integration with: ${env.maskinporten.metadata.issuer}"
+                    "generated JWT for integration with: ${maskinporten.metadata.issuer}"
             }
         }
     }

@@ -10,8 +10,8 @@ import maskinporten.config.Environment
 import maskinporten.token.ClientAuthentication
 
 @KtorExperimentalAPI
-fun Routing.token(env: Environment) {
+fun Routing.token(maskinporten: Environment.Maskinporten) {
     get("/token") {
-        call.respond(HttpStatusCode.OK, ClientAuthentication(env).tokenRequest())
+        call.respond(HttpStatusCode.OK, ClientAuthentication(maskinporten).tokenRequest())
     }
 }

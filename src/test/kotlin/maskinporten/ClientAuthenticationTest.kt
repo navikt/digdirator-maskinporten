@@ -2,6 +2,7 @@ package maskinporten
 
 import com.nimbusds.jwt.JWT
 import io.ktor.util.KtorExperimentalAPI
+import maskinporten.redis.Cache
 import maskinporten.token.ClientAuthentication
 import org.amshove.kluent.`should be instance of`
 import org.amshove.kluent.shouldBeEqualTo
@@ -16,8 +17,9 @@ class ClientAuthenticationTest {
     @Test
     fun `Generate, sign and Validate JWT`() {
         withMockOAuth2Server {
-            val environment = testEnvironment(this)
-            val assertion = ClientAuthentication(environment).clientAssertion()
+            val environment = testEnvironment(this.wellKnownUrl(issuerId = "maskinporten").toString())
+            Cache(environment)
+            val assertion = ClientAuthentication(environment.maskinporten).clientAssertion()
             val parsedToken = parse(assertion)
             val claimsSet = parsedToken.jwtClaimsSet
             parsedToken `should be instance of` JWT::class

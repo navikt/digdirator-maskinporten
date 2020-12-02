@@ -9,8 +9,8 @@ import com.natpryce.konfig.overriding
 import com.natpryce.konfig.stringType
 import io.ktor.util.KtorExperimentalAPI
 import kotlinx.coroutines.runBlocking
-import maskinporten.http.defaultHttpClient
 import maskinporten.http.configurationMetadata
+import maskinporten.http.defaultHttpClient
 import maskinporten.token.OauthServerConfigurationMetadata
 
 private val config: Configuration =
@@ -20,17 +20,18 @@ private val config: Configuration =
 data class Environment(
     val application: Application = Application(),
     val maskinporten: Maskinporten = Maskinporten(),
+    val redis: Redis = Redis()
 ) {
 
     data class Application(
-        val profile: String = config.getOrElse(Key("application.profile", stringType), "TEST"),
+        val profile: String = config.getOrElse(Key("application.profile", stringType), Profile.TEST.value),
         val port: Int = config.getOrElse(Key("application.port", intType), 8080),
     )
 
     data class Maskinporten(
         val wellKnownUrl: String = config[Key("maskinporten.well.known.url", stringType)],
         val clientId: String = config[Key("maskinporten.client.id", stringType)],
-        val privateJwk: String = config[Key("maskinporten.client.jwk", stringType)],
+        val clientJwk: String = config[Key("maskinporten.client.jwk", stringType)],
         val scopes: String = config[Key("maskinporten.scopes", stringType)],
     ) {
         @KtorExperimentalAPI
@@ -39,4 +40,14 @@ data class Environment(
                 defaultHttpClient.configurationMetadata(wellKnownUrl)
             }
     }
+
+    data class Redis(
+        val host: String = config[Key("redis.host", stringType)],
+        val port: Int = config.getOrElse(Key("redis.port", intType), 6379),
+        val password: String = config[Key("redis.password", stringType)]
+    )
+}
+
+enum class Profile(val value: String) {
+    TEST("TEST")
 }
