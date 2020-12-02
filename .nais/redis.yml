@@ -4,7 +4,7 @@ kind: "Application"
 metadata:
   labels:
     team: plattformsikkerhet
-  name: digdirator-maskinporten-redis
+  name: token-x-canary-dings-redis
   namespace: plattformsikkerhet
 spec:
   image: bitnami/redis:5.0.9
@@ -25,6 +25,6 @@ spec:
   accessPolicy:
     inbound:
       rules:
-        - application: digdirator-maskinporten
+        - application: token-x-canary-dings
   envFrom:
     - secret: redis-password

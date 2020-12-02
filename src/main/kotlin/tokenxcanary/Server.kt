@@ -1,4 +1,4 @@
-package maskinporten
+package tokenxcanary
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
@@ -15,13 +15,13 @@ import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.server.netty.NettyApplicationEngine
 import io.ktor.util.KtorExperimentalAPI
-import maskinporten.api.selfTest
-import maskinporten.api.token
-import maskinporten.common.getTokenAndValidate
-import maskinporten.common.setCurrent
-import maskinporten.config.Environment
-import maskinporten.redis.Cache
-import maskinporten.token.ClientAuthentication
+import tokenxcanary.api.selfTest
+import tokenxcanary.api.token
+import tokenxcanary.common.getTokenAndValidate
+import tokenxcanary.common.setCurrent
+import tokenxcanary.config.Environment
+import tokenxcanary.redis.Cache
+import tokenxcanary.token.ClientAuthentication
 import mu.KotlinLogging
 import org.slf4j.event.Level
 

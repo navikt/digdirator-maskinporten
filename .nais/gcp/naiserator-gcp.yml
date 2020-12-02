@@ -1,7 +1,7 @@
 kind: Application
 apiVersion: nais.io/v1alpha1
 metadata:
-  name: digdirator-maskinporten
+  name: token-x-canary-dings
   namespace: {{namespace}}
   labels:
     team: {{team}}
@@ -13,6 +13,8 @@ spec:
       {{#each outbound-host}}
         - host: "{{this}}"
       {{/each}}
+      rules:
+        - application: token-x-canary-dings-redis
   ingresses:
     {{#each ingresses}}
      - "{{this}}"
@@ -48,4 +50,6 @@ spec:
     - name: "{{this.name}}"
       value: "{{this.value}}"
     {{/each}}
+  envFrom:
+    - secret: redis-password
 

@@ -10,7 +10,7 @@ on:
  ## schedule:
  ##   - cron: '*/10 * * * *'
 env:
-  IMAGE: docker.pkg.github.com/${{ github.repository }}/digdirator-maskinporten:${{ github.sha }}
+  IMAGE: docker.pkg.github.com/${{ github.repository }}/token-x-canary-dings:${{ github.sha }}
 
 jobs:
   deploy-dev-gcp:

@@ -1,12 +1,12 @@
-package maskinporten.common
+package tokenxcanary.common
 
 import com.nimbusds.jose.jwk.RSAKey
 import com.nimbusds.jwt.JWTParser
 import io.ktor.util.KtorExperimentalAPI
 import kotlinx.coroutines.runBlocking
-import maskinporten.redis.Cache
-import maskinporten.token.AccessTokenResponse
-import maskinporten.token.ClientAuthentication
+import tokenxcanary.redis.Cache
+import tokenxcanary.token.AccessTokenResponse
+import tokenxcanary.token.ClientAuthentication
 import mu.KotlinLogging
 import java.text.ParseException
 

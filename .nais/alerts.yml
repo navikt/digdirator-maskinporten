@@ -1,7 +1,7 @@
 apiVersion: "nais.io/v1"
 kind: "Alert"
 metadata:
-  name: digdirator-maskinporten
+  name: token-x-canary-dings
   namespace: plattformsikkerhet
   labels:
     team: plattformsikkerhet
@@ -9,37 +9,37 @@ spec:
   receivers: # receivers for all alerts below
     slack:
       channel: '#digdirator-alerts'
-      prependText: '<!here> | digdirator-maskinporten-integration-test ' # this text will be prepended to the Slack alert title
+      prependText: '<!here> | token-x-canary-dings-integration-test ' # this text will be prepended to the Slack alert title
   alerts:
     - alert: applikasjon nede
-      expr: up{app="digdirator-maskinporten", job="kubernetes-pods"} == 0
+      expr: up{app="token-x-canary-dings", job="kubernetes-pods"} == 0
       for: 2m
       description: "App {{ $labels.app }} er nede i namespace {{ $labels.kubernetes_namespace }}"
       action: "`kubectl describe pod {{ $labels.kubernetes_pod_name }} -n {{ $labels.kubernetes_namespace }}` for events, og `kubectl logs {{ $labels.kubernetes_pod_name }} -n {{ $labels.kubernetes_namespace }}` for logger"
     - alert: høy feilrate i logger
-      expr: (100 * sum by (log_app, log_namespace) (rate(logd_messages_total{log_app="digdirator-maskinporten",log_level=~"Warning|Error"}[3m])) / sum by (log_app, log_namespace) (rate(logd_messages_total{log_app="digdirator-maskinporten"}[3m]))) > 1
+      expr: (100 * sum by (log_app, log_namespace) (rate(logd_messages_total{log_app="token-x-canary-dings",log_level=~"Warning|Error"}[3m])) / sum by (log_app, log_namespace) (rate(logd_messages_total{log_app="token-x-canary-dings"}[3m]))) > 1
       for: 3m
       action: "Sjekk loggene til app {{ $labels.log_app }} i namespace {{ $labels.log_namespace }}, for å se hvorfor det er så mye feil"
     - alert: feil i selftest
-      expr: selftests_aggregate_result_status{app="digdirator-maskinporten"} > 0
+      expr: selftests_aggregate_result_status{app="token-x-canary-dings"} > 0
       for: 1m
       action: "Sjekk app {{ $labels.app }} i namespace {{ $labels.kubernetes_namespace }} sine selftest for å se hva som er galt"
-      description: digdirator-maskinporten selftest feiler!
+      description: token-x-canary-dings selftest feiler!
     - alert: Høy andel HTTP serverfeil (5xx responser)
       severity: danger
       expr: (100 * (sum by (backend) (rate(traefik_backend_requests_total{code=~"^5\\d\\d", backend=~"mydomain.nais.*/mycontextpath/*"}[3m])) / sum by (backend) (rate(traefik_backend_requests_total{backend=~"mydomain.nais.*/mycontextpath/*"}[3m])))) > 0
       for: 1m
       action: "Sjekk loggene for å se hvorfor {{ $labels.backend }} returnerer HTTP feilresponser"
-      description: digdirator-maskinporten server feiler med ukjent feil!
+      description: token-x-canary-dings server feiler med ukjent feil!
     - alert: Høy andel HTTP klientfeil (4xx responser)
       severity: warning
       expr: (100 * (sum by (backend) (rate(traefik_backend_requests_total{code=~"^4\\d\\d", backend=~"mydomain.nais.*/mycontextpath/*"}[3m])) / sum by (backend) (rate(traefik_backend_requests_total{backend=~"mydomain.nais.*/mycontextpath/*"}[3m])))) > 0
       for: 1m
-      description: digdirator-maskinporten feiler da den prøver å hente token!
+      description: token-x-canary-dings feiler da den prøver å hente token!
       action: "Sjekk loggene for å se hvorfor {{ $labels.backend }} returnerer HTTP feilresponser"
     - alert: Antall restarts
       expr: sum by(container) (increase(kube_pod_container_status_restarts_total{container=~"tokendings"}[2m])) > 2
       for: 5m
       severity: danger
-      description: digdirator-maskinporten har restartet flere ganger siste 2 min!
+      description: token-x-canary-dings har restartet flere ganger siste 2 min!
       action: Se `kubectl describe pod tokendings` for events, og `kubectl logs -l app=tokendings` for logger

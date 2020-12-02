@@ -1,7 +1,7 @@
-package maskinporten.redis
+package tokenxcanary.redis
 
-import maskinporten.config.Environment
-import maskinporten.config.Profile
+import tokenxcanary.config.Environment
+import tokenxcanary.config.Profile
 import redis.clients.jedis.Jedis
 
 class Cache(

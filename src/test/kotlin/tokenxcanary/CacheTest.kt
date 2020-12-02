@@ -1,8 +1,8 @@
-package maskinporten
+package tokenxcanary
 
 import io.ktor.util.KtorExperimentalAPI
-import maskinporten.common.setCurrent
-import maskinporten.redis.Cache
+import tokenxcanary.common.setCurrent
+import tokenxcanary.redis.Cache
 import org.amshove.kluent.shouldBe
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldNotBeEqualTo

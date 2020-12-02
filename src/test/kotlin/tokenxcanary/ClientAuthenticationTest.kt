@@ -1,9 +1,9 @@
-package maskinporten
+package tokenxcanary
 
 import com.nimbusds.jwt.JWT
 import io.ktor.util.KtorExperimentalAPI
-import maskinporten.redis.Cache
-import maskinporten.token.ClientAuthentication
+import tokenxcanary.redis.Cache
+import tokenxcanary.token.ClientAuthentication
 import org.amshove.kluent.`should be instance of`
 import org.amshove.kluent.shouldBeEqualTo
 import org.hamcrest.MatcherAssert

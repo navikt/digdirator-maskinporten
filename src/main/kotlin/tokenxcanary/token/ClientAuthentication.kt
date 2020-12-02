@@ -1,4 +1,4 @@
-package maskinporten.token
+package tokenxcanary.token
 
 import com.nimbusds.jose.JOSEObjectType
 import com.nimbusds.jose.JWSAlgorithm
@@ -8,11 +8,11 @@ import com.nimbusds.jose.jwk.RSAKey
 import com.nimbusds.jwt.JWTClaimsSet
 import com.nimbusds.jwt.SignedJWT
 import io.ktor.util.KtorExperimentalAPI
-import maskinporten.common.parseToRsaKey
-import maskinporten.config.Environment
-import maskinporten.http.defaultHttpClient
-import maskinporten.http.token
-import maskinporten.token.ClientAuthentication.Companion.SCOPE
+import tokenxcanary.common.parseToRsaKey
+import tokenxcanary.config.Environment
+import tokenxcanary.http.defaultHttpClient
+import tokenxcanary.http.token
+import tokenxcanary.token.ClientAuthentication.Companion.SCOPE
 import mu.KotlinLogging
 import java.time.Instant
 import java.util.UUID

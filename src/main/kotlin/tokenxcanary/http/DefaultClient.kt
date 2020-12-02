@@ -1,4 +1,4 @@
-package maskinporten.http
+package tokenxcanary.http
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
@@ -16,11 +16,11 @@ import io.ktor.client.statement.readText
 import io.ktor.http.ContentType
 import io.ktor.http.parametersOf
 import io.ktor.util.KtorExperimentalAPI
-import maskinporten.token.AccessTokenResponse
-import maskinporten.token.ClientAuthentication.Companion.GRANT_TYPE
-import maskinporten.token.ClientAuthentication.Companion.PARAMS_CLIENT_ASSERTION
-import maskinporten.token.ClientAuthentication.Companion.PARAMS_GRANT_TYPE
-import maskinporten.token.OauthServerConfigurationMetadata
+import tokenxcanary.token.AccessTokenResponse
+import tokenxcanary.token.ClientAuthentication.Companion.GRANT_TYPE
+import tokenxcanary.token.ClientAuthentication.Companion.PARAMS_CLIENT_ASSERTION
+import tokenxcanary.token.ClientAuthentication.Companion.PARAMS_GRANT_TYPE
+import tokenxcanary.token.OauthServerConfigurationMetadata
 import mu.KotlinLogging
 
 private val log = KotlinLogging.logger { }

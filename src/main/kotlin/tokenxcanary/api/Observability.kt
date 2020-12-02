@@ -1,4 +1,4 @@
-package maskinporten.api
+package tokenxcanary.api
 
 import io.ktor.application.call
 import io.ktor.http.ContentType

@@ -1,4 +1,4 @@
-package maskinporten
+package tokenxcanary
 
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode

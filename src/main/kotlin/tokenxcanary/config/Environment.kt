@@ -1,4 +1,4 @@
-package maskinporten.config
+package tokenxcanary.config
 
 import com.natpryce.konfig.Configuration
 import com.natpryce.konfig.ConfigurationProperties.Companion.systemProperties
@@ -9,9 +9,9 @@ import com.natpryce.konfig.overriding
 import com.natpryce.konfig.stringType
 import io.ktor.util.KtorExperimentalAPI
 import kotlinx.coroutines.runBlocking
-import maskinporten.http.configurationMetadata
-import maskinporten.http.defaultHttpClient
-import maskinporten.token.OauthServerConfigurationMetadata
+import tokenxcanary.http.configurationMetadata
+import tokenxcanary.http.defaultHttpClient
+import tokenxcanary.token.OauthServerConfigurationMetadata
 
 private val config: Configuration =
     systemProperties() overriding

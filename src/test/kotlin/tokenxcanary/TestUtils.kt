@@ -1,4 +1,4 @@
-package maskinporten
+package tokenxcanary
 
 import com.nimbusds.jose.Algorithm
 import com.nimbusds.jose.jwk.KeyUse
@@ -6,8 +6,8 @@ import com.nimbusds.jose.jwk.RSAKey
 import com.nimbusds.jwt.JWTParser
 import io.ktor.application.Application
 import io.ktor.util.KtorExperimentalAPI
-import maskinporten.config.Environment
-import maskinporten.http.objectMapper
+import tokenxcanary.config.Environment
+import tokenxcanary.http.objectMapper
 import no.nav.security.mock.oauth2.MockOAuth2Server
 import no.nav.security.mock.oauth2.token.DefaultOAuth2TokenCallback
 import org.testcontainers.containers.GenericContainer

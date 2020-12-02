@@ -1,9 +1,11 @@
 namespace: plattformsikkerhet
 team: plattformsikkerhet
 ingresses:
-  - https://digdirator-maskinporten.dev-gcp.nais.io
+  - https://token-x-canary-dings.dev-gcp.nais.io
 env:
   - name: APPLICATION_PROFILE
     value: DEV
+  - name: REDIS_HOST
+    value: token-x-canary-dings-redis
 outbound-host:
   - ver2.maskinporten.no

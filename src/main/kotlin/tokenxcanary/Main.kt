@@ -1,11 +1,11 @@
-package maskinporten
+package tokenxcanary
 
 import io.ktor.util.KtorExperimentalAPI
 import io.prometheus.client.hotspot.DefaultExports
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import maskinporten.config.Environment
+import tokenxcanary.config.Environment
 import mu.KotlinLogging
 import kotlin.system.exitProcess
 

@@ -1,4 +1,4 @@
-package maskinporten
+package tokenxcanary
 
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.nimbusds.jwt.JWTParser
@@ -7,8 +7,8 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.handleRequest
 import io.ktor.server.testing.withTestApplication
 import io.ktor.util.KtorExperimentalAPI
-import maskinporten.http.objectMapper
-import maskinporten.token.AccessTokenResponse
+import tokenxcanary.http.objectMapper
+import tokenxcanary.token.AccessTokenResponse
 import org.amshove.kluent.shouldBeEqualTo
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Test
