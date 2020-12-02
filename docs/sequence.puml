@@ -1,40 +1,67 @@
 @startuml component
-title Digdirator-Maskinporten Canary Sequence Flow
+title Token-x-canary-dings Sequence Flow
 skinparam maxMessageSize 300
 autonumber
 
 entity github as "Github"
+
+box "NAIS Resources"
 control digdirator as "Digdirator"
-participant nais as "nais"
+control jwker as "Jwker"
 participant application as "Application"
-participant slack as "Slack"
+participant tokendings as "Tokendings"
+participant nais as "Secret"
 participant prom as "Prometheus"
+end box
+
+box "External Resources"
+participant slack as "Slack"
+participant digdir as "Digdir"
+end box
 
 group Github
 github -> application: trigger integration (10 min interval)
-    group Deploy Fail | Cancelled
+    group Fail | Cancelled
     github -> slack: POST message (3 min timeout)
     end
 end
 
-group Digdirator
-    digdirator -> nais: get currents private JWK(s)
-    digdirator -> digdirator: rotate private JWK(s)
-    digdirator -> digdir: update public JWKS set
-    digdirator -> nais: inject private JWK and metadata
+group Deployment
+group Jwker
+    jwker -> tokendings: Post client configuration
+    jwker -> nais: update Jwk
+end
+
+group Digdirator (MaskinportenClient)
+        digdirator -> nais: get currents private JWK(s)
+        digdirator -> digdirator: rotate private JWK(s)
+        digdirator -> digdir: update public JWKS set
+        digdirator -> nais: inject private JWK and metadata
+    end
 end
 
 nais -> application: mount secret and metadata
 
-==Maskinporten==
+==Maskinporten Usage==
 group Application
     group Unhealthy
         application -> application: pod restarts
         nais -> prom: alerts
     end
     application -> application: start create and sign JWT
-    application -> digdir: request tokken with signed JWT
+    application -> digdir: request token with signed JWT
     digdir -> application: access_token
+end
+
+==TokenDings Usage==
+group Application
+    group Unhealthy
+        application -> application: pod restarts
+        nais -> prom: alerts
+    end
+    application -> application: start create and sign JWT
+    application -> tokendings: request token with signed JWT and subject_token
+    tokendings -> application: access_token
 end
 
 @enduml
