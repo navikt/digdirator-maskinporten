@@ -5,7 +5,7 @@ autonumber
 
 entity github as "Github"
 
-box "NAIS Resources"
+box "NAIS Resources" #Green
 control digdirator as "Digdirator"
 control jwker as "Jwker"
 participant application as "Application"
