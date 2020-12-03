@@ -1,16 +1,17 @@
 @startuml component
 title Token-x-canary-dings Sequence Flow
+skinparam backgroundColor #EEEBDC
 skinparam maxMessageSize 300
 autonumber
 
 entity github as "Github"
 
-box "NAIS Resources" #Green
+box "NAIS Resources" #RoyalBlue
 control digdirator as "Digdirator"
 control jwker as "Jwker"
 participant application as "Application"
 participant tokendings as "Tokendings"
-participant nais as "Secret"
+participant nais as "Secrets"
 participant prom as "Prometheus"
 end box
 
@@ -20,7 +21,7 @@ participant digdir as "Digdir"
 end box
 
 group Github
-github -> application: trigger integration (10 min interval)
+github -> application: trigger integration (10 min interval) #Ivory
     group Fail | Cancelled
     github -> slack: POST message (3 min timeout)
     end
@@ -40,7 +41,7 @@ group Digdirator (MaskinportenClient)
     end
 end
 
-nais -> application: mount secret and metadata
+nais -> application: mount secrets and metadata
 
 ==Maskinporten Usage==
 group Application

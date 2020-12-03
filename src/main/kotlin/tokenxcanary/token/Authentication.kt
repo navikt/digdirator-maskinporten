@@ -50,18 +50,18 @@ internal fun assertion(clientProperties: ClientProperties, rsaKey: RSAKey, scope
 }
 
 @KtorExperimentalAPI
-fun JWTClaimsSet.Builder.configurableClaims(clientProperties: ClientProperties, now: Date, scopes: String?) = scopes?.let {
+private fun JWTClaimsSet.Builder.configurableClaims(clientProperties: ClientProperties, now: Date, scopes: String?) = scopes?.let {
     // Maskinporten
     this.claim(SCOPE, it).audience(clientProperties.metadata.issuer)
     // TokenExchange
 } ?: this.subject(clientProperties.clientId).notBeforeTime(now).audience(clientProperties.metadata.tokenEndpoint)
 
-fun JWTClaimsSet.Builder.commonClaims(clientProperties: ClientProperties, now: Date): JWTClaimsSet.Builder = this.issuer(clientProperties.clientId)
+private fun JWTClaimsSet.Builder.commonClaims(clientProperties: ClientProperties, now: Date): JWTClaimsSet.Builder = this.issuer(clientProperties.clientId)
     .issueTime(now)
     .expirationTime(Date.from(Instant.now().plusSeconds(120)))
     .jwtID(UUID.randomUUID().toString())
 
-internal fun JWTClaimsSet.signWithHeader(rsaKey: RSAKey): SignedJWT =
+private fun JWTClaimsSet.signWithHeader(rsaKey: RSAKey): SignedJWT =
     SignedJWT(
         JWSHeader.Builder(JWSAlgorithm.RS256)
             .keyID(rsaKey.keyID)
