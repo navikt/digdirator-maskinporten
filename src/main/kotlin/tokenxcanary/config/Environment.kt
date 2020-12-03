@@ -35,6 +35,7 @@ data class Environment(
         override val clientJwk: String = config[Key("maskinporten.client.jwk", stringType)],
         val scopes: String = config[Key("maskinporten.scopes", stringType)],
     ) : ClientProperties {
+
         @KtorExperimentalAPI
         override val metadata: OauthServerConfigurationMetadata =
             runBlocking {
@@ -45,10 +46,11 @@ data class Environment(
     data class TokenX(
         override val wellKnownUrl: String = config[Key("token.x.well.known.url", stringType)],
         override val clientId: String = config[Key("token.x.client.id", stringType)],
-        override val clientJwk: String = config[Key("token.x.client.jwk", stringType)],
-        val audience: String = config[Key("token.x.audience", stringType)]
-
+        override val clientJwk: String = config[Key("token.x.private.jwk", stringType)],
+        val audience: String = config[Key("token.x.client.id", stringType)],
+        val targetAudience: String = config[Key("token.x.target.client.id", stringType)]
     ) : ClientProperties {
+
         @KtorExperimentalAPI
         override val metadata: OauthServerConfigurationMetadata =
             runBlocking {

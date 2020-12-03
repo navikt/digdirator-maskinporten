@@ -93,9 +93,9 @@ fun Application.setupHttpServer(environment: Environment, applicationStatus: App
     validate(maskinportenEnv.metadata.issuer, maskinportenTokenResponse.parseResponseJwt())
 
     val oAuth2TokenExchangeRequest = OAuth2TokenExchangeRequest(
-        clientAssertion = tokenXAuth.assertion(null),
+        clientAssertion = tokenXAuth.assertion(),
         subjectToken = maskinportenTokenResponse.accessToken,
-        audience = tokenXEnv.audience,
+        audience = tokenXEnv.targetAudience,
         tokenEndpoint = tokenXEnv.metadata.tokenEndpoint
     )
 

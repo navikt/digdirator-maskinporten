@@ -82,7 +82,8 @@ internal fun testEnvironment(mockOAuth2Server: MockOAuth2Server) = Environment(
         wellKnownUrl = mockOAuth2Server.wellKnownUrl(issuerId = "tokenx").toString(),
         clientJwk = objectMapper.writeValueAsString(generateRsaKey().toJSONObject()),
         clientId = "clientId",
-        audience = "cluster:namespace:application"
+        audience = "cluster:namespace:application",
+        targetAudience = "someOtherCluster:someOtherNamespace:someOtherApplication"
     ),
     redis = Environment.Redis(
         host = RedisContainer.instance.host,

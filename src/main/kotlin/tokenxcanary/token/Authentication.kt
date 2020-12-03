@@ -24,7 +24,7 @@ class Authentication(
 ) {
     private val rsaKey = clientProperties.clientJwk.parseToRsaKey()
 
-    fun assertion(scopes: String?): String = assertion(clientProperties, rsaKey, scopes).also {
+    fun assertion(scopes: String? = null): String = assertion(clientProperties, rsaKey, scopes).also {
         log.info {
             "JWK with keyID: ${rsaKey.keyID} used to sign " +
                 "generated JWT for integration with: ${clientProperties.metadata.issuer}"
@@ -42,12 +42,17 @@ internal fun assertion(clientProperties: ClientProperties, rsaKey: RSAKey, scope
     val builder = JWTClaimsSet.Builder()
 
     return builder
-        .configurableClaims(clientProperties, now, scopes)
         .commonClaims(clientProperties, now)
+        .configurableClaims(clientProperties, now, scopes)
         .build()
         .signWithHeader(rsaKey)
         .serialize()
 }
+
+private fun JWTClaimsSet.Builder.commonClaims(clientProperties: ClientProperties, now: Date): JWTClaimsSet.Builder = this.issuer(clientProperties.clientId)
+    .issueTime(now)
+    .expirationTime(Date.from(Instant.now().plusSeconds(120)))
+    .jwtID(UUID.randomUUID().toString())
 
 @KtorExperimentalAPI
 private fun JWTClaimsSet.Builder.configurableClaims(clientProperties: ClientProperties, now: Date, scopes: String?) = scopes?.let {
@@ -55,11 +60,6 @@ private fun JWTClaimsSet.Builder.configurableClaims(clientProperties: ClientProp
     this.claim(SCOPE, it).audience(clientProperties.metadata.issuer)
     // TokenExchange
 } ?: this.subject(clientProperties.clientId).notBeforeTime(now).audience(clientProperties.metadata.tokenEndpoint)
-
-private fun JWTClaimsSet.Builder.commonClaims(clientProperties: ClientProperties, now: Date): JWTClaimsSet.Builder = this.issuer(clientProperties.clientId)
-    .issueTime(now)
-    .expirationTime(Date.from(Instant.now().plusSeconds(120)))
-    .jwtID(UUID.randomUUID().toString())
 
 private fun JWTClaimsSet.signWithHeader(rsaKey: RSAKey): SignedJWT =
     SignedJWT(

@@ -7,5 +7,7 @@ env:
     value: DEV
   - name: REDIS_HOST
     value: token-x-canary-dings-redis
+  - name: TOKEN_X_TARGET_CLIENT_ID
+    value: dev-gcp:plattformsikkerhet:api-dings
 outbound-host:
   - ver2.maskinporten.no
