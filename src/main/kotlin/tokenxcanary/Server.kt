@@ -27,7 +27,9 @@ import tokenxcanary.config.Environment
 import tokenxcanary.redis.Cache
 import tokenxcanary.token.Authentication
 import tokenxcanary.token.MaskinportenClient
+import tokenxcanary.token.OAuth2TokenExchangeRequest
 import tokenxcanary.token.OAuth2TokenRequest
+import tokenxcanary.token.TokenXClient
 
 private val log = KotlinLogging.logger { }
 
@@ -49,7 +51,7 @@ fun createHttpServer(environment: Environment, applicationStatus: ApplicationSta
 fun Application.setupHttpServer(environment: Environment, applicationStatus: ApplicationStatus) {
 
     val maskinportenEnv = environment.maskinporten
-    val tokenDingsEnv = environment.tokenX
+    val tokenXEnv = environment.tokenX
 
     log.info { "Installing:" }
     val logLevel = Level.INFO
@@ -65,7 +67,7 @@ fun Application.setupHttpServer(environment: Environment, applicationStatus: App
 
     log.info { "Client Authentication" }
     val maskinportenAuth = Authentication(maskinportenEnv)
-    // val tokendignsAuth = Authentication(tokenDingsEnv)
+    val tokenXAuth = Authentication(tokenXEnv)
 
     log.info { "Cache" }
     Cache(environment).setCurrent(maskinportenEnv.clientJwk)
@@ -85,15 +87,23 @@ fun Application.setupHttpServer(environment: Environment, applicationStatus: App
     )
 
     val maskinportenTokenResponse = runBlocking {
-        MaskinportenClient.tokenRequest(oAuth2TokenRequest)
+        MaskinportenClient.token(oAuth2TokenRequest)
     }
 
-    //  val tokenDingsJwt = runBlocking {
-    //      maskinportenAuth.tokenRequest().parseResponseJwt()
-    //  }
-
     validate(maskinportenEnv.metadata.issuer, maskinportenTokenResponse.parseResponseJwt())
-    // validate(tokenDingsEnv.metadata.issuer, tokenDingsJwt)
+
+    val oAuth2TokenExchangeRequest = OAuth2TokenExchangeRequest(
+        clientAssertion = tokenXAuth.assertion(null),
+        subjectToken = maskinportenTokenResponse.accessToken,
+        audience = tokenXEnv.audience,
+        tokenEndpoint = tokenXEnv.metadata.tokenEndpoint
+    )
+
+    val tokenDingsTokenResponse = runBlocking {
+        TokenXClient.token(oAuth2TokenExchangeRequest)
+    }
+
+    validate(tokenXEnv.metadata.issuer, tokenDingsTokenResponse.parseResponseJwt())
 
     applicationStatus.initialized = true
 }

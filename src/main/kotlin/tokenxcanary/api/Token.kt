@@ -22,7 +22,7 @@ fun Routing.token(maskinporten: Environment.Maskinporten) {
         )
         call.respond(
             HttpStatusCode.OK,
-            MaskinportenClient.tokenRequest(oAuth2TokenRequest)
+            MaskinportenClient.token(oAuth2TokenRequest)
         )
     }
 }

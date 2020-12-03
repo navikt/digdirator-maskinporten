@@ -8,10 +8,7 @@ import tokenxcanary.http.defaultHttpClient
 import tokenxcanary.http.withLogAndErrorHandling
 
 @KtorExperimentalAPI
-class TokenX {
-
-    suspend fun tokenRequest(oAuth2TokenExchangeRequest: OAuth2TokenExchangeRequest) =
-        defaultHttpClient.tokenExchange(oAuth2TokenExchangeRequest)
+class TokenXClient {
 
     companion object {
         internal const val PARAMS_GRANT_TYPE = "grant_type"
@@ -23,6 +20,9 @@ class TokenX {
         internal const val PARAMS_CLIENT_ASSERTION = "client_assertion"
         internal const val PARAMS_CLIENT_ASSERTION_TYPE = "client_assertion_type"
         internal const val CLIENT_ASSERTION_TYPE = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer"
+
+        suspend fun token(oAuth2TokenExchangeRequest: OAuth2TokenExchangeRequest) =
+            defaultHttpClient.tokenExchange(oAuth2TokenExchangeRequest)
     }
 }
 
@@ -32,12 +32,12 @@ private suspend fun HttpClient.tokenExchange(request: OAuth2TokenExchangeRequest
         this.submitForm<AccessTokenResponse>(
             url = request.tokenEndpoint,
             formParameters = parametersOf(
-                TokenX.PARAMS_CLIENT_ASSERTION to listOf(request.clientAssertion),
-                TokenX.PARAMS_CLIENT_ASSERTION_TYPE to listOf(TokenX.CLIENT_ASSERTION_TYPE),
-                TokenX.PARAMS_GRANT_TYPE to listOf(TokenX.GRANT_TYPE),
-                TokenX.PARAMS_SUBJECT_TOKEN to listOf(request.subjectToken),
-                TokenX.PARAMS_SUBJECT_TOKEN_TYPE to listOf(TokenX.SUBJECT_TOKEN_TYPE),
-                TokenX.PARAMS_AUDIENCE to listOf(request.audience)
+                TokenXClient.PARAMS_CLIENT_ASSERTION to listOf(request.clientAssertion),
+                TokenXClient.PARAMS_CLIENT_ASSERTION_TYPE to listOf(TokenXClient.CLIENT_ASSERTION_TYPE),
+                TokenXClient.PARAMS_GRANT_TYPE to listOf(TokenXClient.GRANT_TYPE),
+                TokenXClient.PARAMS_SUBJECT_TOKEN to listOf(request.subjectToken),
+                TokenXClient.PARAMS_SUBJECT_TOKEN_TYPE to listOf(TokenXClient.SUBJECT_TOKEN_TYPE),
+                TokenXClient.PARAMS_AUDIENCE to listOf(request.audience)
             )
         )
     }

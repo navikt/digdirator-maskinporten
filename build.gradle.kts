@@ -1,12 +1,11 @@
 val kotlinVersion = "1.4.20"
-val ktorVersion = "1.4.2"
-val kotlinxVersion = "1.4.1"
-val jacksonVersion = "2.11.2"
+val ktorVersion = "1.4.3"
+val kotlinxVersion = "1.4.2"
+val jacksonVersion = "2.12.0"
 val konfigVersion = "1.6.10.0"
-val nimbusOIDC = "8.26"
-val nimbusJoseVersion = "9.1.2"
+val nimbusOIDC = "8.28.1"
 val apacheCommonsVersion = "3.11"
-val logstashEncoderVersion = "6.4"
+val logstashEncoderVersion = "6.5"
 val logbackVersion = "1.2.3"
 val ioPrometheusVersion = "0.9.0"
 val kotlinloggingVersion = "2.0.3"
@@ -62,12 +61,10 @@ dependencies {
     implementation ("io.ktor:ktor-server-netty:$ktorVersion")
     implementation ("io.ktor:ktor-jackson:$ktorVersion")
     implementation ("io.ktor:ktor-client-core:$ktorVersion")
-    implementation ("io.ktor:ktor-client-apache:$ktorVersion")
     implementation ("io.ktor:ktor-client-jackson:$ktorVersion")
     implementation ("com.natpryce:konfig:$konfigVersion")
     implementation ("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
     implementation ("org.apache.commons:commons-lang3:$apacheCommonsVersion")
-    implementation ("com.nimbusds:nimbus-jose-jwt:$nimbusJoseVersion")
     implementation("com.nimbusds:oauth2-oidc-sdk:${nimbusOIDC}")
     implementation ("net.logstash.logback:logstash-logback-encoder:$logstashEncoderVersion")
     implementation ("ch.qos.logback:logback-classic:$logbackVersion")

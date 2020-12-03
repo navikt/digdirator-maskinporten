@@ -15,7 +15,7 @@ class MaskinportenClient {
         internal const val GRANT_TYPE_JWT_BEARER = "urn:ietf:params:oauth:grant-type:jwt-bearer"
         internal const val PARAMS_ASSERTION = "assertion"
 
-        suspend fun tokenRequest(oAuth2TokenRequest: OAuth2TokenRequest) =
+        suspend fun token(oAuth2TokenRequest: OAuth2TokenRequest) =
             defaultHttpClient.token(oAuth2TokenRequest)
     }
 }

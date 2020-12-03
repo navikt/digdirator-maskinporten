@@ -45,7 +45,9 @@ data class Environment(
     data class TokenX(
         override val wellKnownUrl: String = config[Key("token.x.well.known.url", stringType)],
         override val clientId: String = config[Key("token.x.client.id", stringType)],
-        override val clientJwk: String = config[Key("token.x.client.jwk", stringType)]
+        override val clientJwk: String = config[Key("token.x.client.jwk", stringType)],
+        val audience: String = config[Key("token.x.audience", stringType)]
+
     ) : ClientProperties {
         @KtorExperimentalAPI
         override val metadata: OauthServerConfigurationMetadata =
@@ -67,6 +69,7 @@ interface ClientProperties {
     val clientJwk: String
     val metadata: OauthServerConfigurationMetadata
 }
+
 enum class Profile(val value: String) {
     TEST("TEST")
 }

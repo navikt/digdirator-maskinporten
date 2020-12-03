@@ -24,12 +24,7 @@ class Authentication(
 ) {
     private val rsaKey = clientProperties.clientJwk.parseToRsaKey()
 
-    fun assertion(scopes: String?) = assertion(
-        clientProperties.clientId,
-        clientProperties.metadata.issuer,
-        rsaKey,
-        scopes
-    ).also {
+    fun assertion(scopes: String?): String = assertion(clientProperties, rsaKey, scopes).also {
         log.info {
             "JWK with keyID: ${rsaKey.keyID} used to sign " +
                 "generated JWT for integration with: ${clientProperties.metadata.issuer}"
@@ -42,26 +37,31 @@ class Authentication(
 }
 
 @KtorExperimentalAPI
-internal fun assertion(clientId: String, audience: String, rsaKey: RSAKey, scopes: String?): String {
+internal fun assertion(clientProperties: ClientProperties, rsaKey: RSAKey, scopes: String?): String {
     val now = Date.from(Instant.now())
     val builder = JWTClaimsSet.Builder()
 
-    scopes?.let {
-        builder.claim(SCOPE, it)
-    }
-
     return builder
-        .issuer(clientId)
-        .audience(audience)
-        .issueTime(now)
-        .expirationTime(Date.from(Instant.now().plusSeconds(120)))
-        .jwtID(UUID.randomUUID().toString())
+        .configurableClaims(clientProperties, now, scopes)
+        .commonClaims(clientProperties, now)
         .build()
-        .sign(rsaKey)
+        .signWithHeader(rsaKey)
         .serialize()
 }
 
-internal fun JWTClaimsSet.sign(rsaKey: RSAKey): SignedJWT =
+@KtorExperimentalAPI
+fun JWTClaimsSet.Builder.configurableClaims(clientProperties: ClientProperties, now: Date, scopes: String?) = scopes?.let {
+    // Maskinporten
+    this.claim(SCOPE, it).audience(clientProperties.metadata.issuer)
+    // TokenExchange
+} ?: this.subject(clientProperties.clientId).notBeforeTime(now).audience(clientProperties.metadata.tokenEndpoint)
+
+fun JWTClaimsSet.Builder.commonClaims(clientProperties: ClientProperties, now: Date): JWTClaimsSet.Builder = this.issuer(clientProperties.clientId)
+    .issueTime(now)
+    .expirationTime(Date.from(Instant.now().plusSeconds(120)))
+    .jwtID(UUID.randomUUID().toString())
+
+internal fun JWTClaimsSet.signWithHeader(rsaKey: RSAKey): SignedJWT =
     SignedJWT(
         JWSHeader.Builder(JWSAlgorithm.RS256)
             .keyID(rsaKey.keyID)
